@@ -16,12 +16,31 @@ def check_keyword(identifier):
     for check in keywords:
         if identifier.lower() == check:
 
-            print( f'<keyword>{identifier}</keyword>')
+            append_text( f'<keyword> {identifier} </keyword>\n')
             is_found = True
             break
     if identifier != "" and not is_found:
-        print( f'<identifier>{identifier}</identifier>')
+        append_text( f'<identifier> {identifier} </identifier>\n')
 
+def append_text(txt):
+    with open("analyzer_output.txt", "a") as f:
+        f.write(txt)
+
+def compare_files():
+    j=0
+    my_output = []
+    txt_out = []
+    with open('analyzer_output.txt') as file:
+        for lines in file:
+            my_output.append(lines)
+    with open('main_xml.txt') as f:
+        for line in f:
+            txt_out.append(line)
+
+    for i in range(len(my_output)):
+        j+=1
+        if my_output[i] != txt_out[i]:
+            print(f'Error on line {j}')
 
 
 bool_stgLit = False
@@ -29,6 +48,8 @@ stgLit = ''
 is_symbol = False
 
 ident = ''
+with open("analyzer_output.txt", "a") as f:
+    f.write('<tokens>\n')
 
 with open('Main.jack.txt') as file:
 
@@ -63,7 +84,7 @@ for c in code:
             stgLit += word
             continue
         elif bool_stgLit and word == '"' and not found:
-            print(f'<literal>{stgLit}</literal>')
+            append_text(f'<literal> {stgLit} </literal>\n')
             stgLit =''
             bool_stgLit = False
             found = True
@@ -79,7 +100,7 @@ for c in code:
                         check_keyword(ident)
                         ident = ''
 
-                    print(f'<symbol>{word}</symbol>')
+                    append_text(f'<symbol> {word} </symbol>\n')
 
 
 
@@ -91,7 +112,7 @@ for c in code:
                         check_keyword(ident)
                         ident = ''
 
-                    print(f'<operator>{word}</operator>')
+                    append_text(f'<operator> {word} </operator>\n')
 
 
 
@@ -102,8 +123,9 @@ for c in code:
             ident = ''
 
 
+with open("analyzer_output.txt", "a") as f:
+    f.write('</tokens>\n')
 
 
-
-
+compare_files()
 
